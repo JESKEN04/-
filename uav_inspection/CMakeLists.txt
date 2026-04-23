@@ -25,7 +25,6 @@ ament_python_install_package(${PROJECT_NAME})
 install(DIRECTORY
   worlds
   launch
-  config
   DESTINATION share/${PROJECT_NAME}
 )
 
