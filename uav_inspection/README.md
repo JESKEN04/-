@@ -399,3 +399,58 @@ xdg-open ../artifacts/visualization/map_and_path_xy.png
 其中：
 - `map_and_path_3d.png`：三维障碍物栅格 + 原始路径 + 平滑路径。
 - `map_and_path_xy.png`：俯视图，适合论文展示路径趋势。
+
+### 已整合进一键启动脚本（你提到的第1点）
+
+现在 `scripts/start_simulation.sh` 默认会先执行 Stage-2：
+1) 三维栅格地图构建；
+2) ABC 路径规划；
+3) 可视化图生成；
+4) 再启动 Gazebo + PX4 + ROS2 发布节点。
+
+可选参数：
+
+```bash
+# 不跑Stage-2（只启动仿真）
+RUN_STAGE2=0 ./start_simulation.sh
+
+# 不启用地图/路径发布节点
+ENABLE_ROS2_PUBLISHERS=0 ./start_simulation.sh
+```
+
+### 中文乱码/字体缺失（你提到的第2点）
+
+如果出现 `Glyph xxxx missing from current font`，安装中文字体即可：
+
+```bash
+sudo apt install -y fonts-noto-cjk fonts-wqy-zenhei
+```
+
+脚本已内置字体自动回退逻辑（Noto/WenQuanYi/SimHei 等），找不到中文字体时会自动退回英文标题，避免乱码警告。
+
+### 航迹可用于后续飞行脚本（你提到的第3点）
+
+路径规划完成后会额外导出：
+
+- `artifacts/planning/mission_waypoints.csv`
+- `artifacts/planning/mission_waypoints.json`
+
+字段包括 `t_sec, x, y, z, yaw_rad`，可直接作为你后续 offboard/leader-follower 控制脚本输入。
+
+### NumPy / SciPy 版本冲突（你提到的第4点）
+
+你日志里 `numpy=1.26.4` 与 Ubuntu 22.04 自带 scipy 可能冲突。当前规划脚本已去除 scipy 强依赖，默认仅需 numpy。
+
+建议固定到系统 Python 环境：
+
+```bash
+python3 -m pip uninstall -y numpy scipy
+sudo apt install -y --reinstall python3-numpy python3-scipy
+```
+
+然后重新运行：
+
+```bash
+cd ~/ros2_ws/src/environment-main/uav_inspection/scripts
+./run_stage2_pipeline.sh
+```

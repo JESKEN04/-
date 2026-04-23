@@ -336,3 +336,18 @@ cd uav_inspection/scripts
 xdg-open ../artifacts/visualization/map_and_path_3d.png
 xdg-open ../artifacts/visualization/map_and_path_xy.png
 ```
+
+### 一键启动已含 Stage-2
+
+`uav_inspection/scripts/start_simulation.sh` 默认已整合：地图构建 + 航迹规划 + 可视化 + ROS2发布 + PX4仿真启动。
+
+```bash
+cd uav_inspection/scripts
+./start_simulation.sh
+```
+
+如中文显示异常，请安装：
+
+```bash
+sudo apt install -y fonts-noto-cjk fonts-wqy-zenhei
+```
